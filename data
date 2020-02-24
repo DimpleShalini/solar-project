@@ -1,0 +1,165 @@
+/bonita/API/bdm/businessData/com.solar.model.purchaseRequisitionMaster?p=0&c=20&q=find
+purchaseRequisitionData
+
+
+/**
+ * The controller is a JavaScript function that augments the AngularJS scope and exposes functions that can be used in the custom widget template
+ * 
+ * Custom widget properties defined on the right can be used as variables in a controller with $scope.properties
+ * To use AngularJS standard services, you must declare them in the main function arguments.
+ * 
+ * You can leave the controller empty if you do not need it.
+ * 
+ * 
+ */
+function bearTable($scope, $templateCache, $interval, $q, $rootScope, $document, uiGridEditConstants, uiGridConstants) {
+
+    $templateCache.put('ui-grid/selectionRowHeaderButtons',
+        "<div class=\"ui-grid-selection-row-header-buttons \" ng-class=\"{'ui-grid-row-selected': row.isSelected}\" ><input style=\"margin: 0; vertical-align: middle\" type=\"checkbox\" ng-model=\"row.isSelected\" ng-click=\"row.isSelected=!row.isSelected;selectButtonClick(row, $event)\">&nbsp;</div>"
+    );
+
+
+    $templateCache.put('ui-grid/selectionSelectAllButtons',
+        "<div class=\"ui-grid-selection-row-header-buttons \" ng-class=\"{'ui-grid-all-selected': grid.selection.selectAll}\" ng-if=\"grid.options.enableSelectAll\"><input style=\"margin: 0; vertical-align: middle\" type=\"checkbox\" ng-model=\"grid.selection.selectAll\" ng-click=\"grid.selection.selectAll=!grid.selection.selectAll;headerButtonClick($event)\"></div>"
+    );
+
+
+    $scope.SelectedRow = [];
+
+    $scope.gridOptions = {
+        enableSorting: true,
+        enableFiltering: true,
+        enableRowSelection: true,
+        multiSelect: false,
+        enableSelectAll: true,
+        enableColumnMenus: false,
+        enableCellEditOnFocus: true,
+        enableCellEdit: true,
+        paginationPageSizes: [25, 50, 75],
+        paginationPageSize: 25,
+        columnDefs: [{
+                field: 'plantNumber',
+                enableCellEdit: true,
+                cellTemplate: '<div  ng-if="!row.entity.editrow">{{COL_FIELD}}</div><div ng-if="row.entity.editrow"><input type="text" style="height:30px" ng-model="MODEL_COL_FIELD"</div>'
+            },
+            {
+                field: 'requisitionDate',
+                enableCellEdit: true,
+                cellTemplate: '<div  ng-if="!row.entity.editrow">{{COL_FIELD}}</div><div ng-if="row.entity.editrow"><input type="text" style="height:30px" ng-model="MODEL_COL_FIELD"</div>'
+            },
+            {
+                field: 'prNumber',
+                enableCellEdit: true,
+                cellTemplate: '<div width : "*"  ng-if="!row.entity.editrow">{{COL_FIELD}}</div><div ng-if="row.entity.editrow"><input type="text" style="height:30px" ng-model="MODEL_COL_FIELD"</div>'
+            },
+            {
+                field: 'changeDate',
+                enableCellEdit: true,
+                cellTemplate: '<div  ng-if="!row.entity.editrow">{{COL_FIELD}}</div><div ng-if="row.entity.editrow"><input type="text" style="height:30px" ng-model="MODEL_COL_FIELD"</div>'
+            },
+            {
+                field: 'releaseDate',
+                enableCellEdit: true,
+                cellTemplate: '<div width : "*"  ng-if="!row.entity.editrow">{{COL_FIELD}}</div><div ng-if="row.entity.editrow"><input type="text" style="height:30px" ng-model="MODEL_COL_FIELD"</div>'
+            },
+            {
+                field: 'materialGroup',
+                enableCellEdit: true,
+                cellTemplate: '<div  ng-if="!row.entity.editrow">{{COL_FIELD}}</div><div ng-if="row.entity.editrow"><input type="text" style="height:30px" ng-model="MODEL_COL_FIELD"</div>'
+            },
+			{
+                field: 'materialNumber',
+                enableCellEdit: true,
+                cellTemplate: '<div  ng-if="!row.entity.editrow">{{COL_FIELD}}</div><div ng-if="row.entity.editrow"><input type="text" style="height:30px" ng-model="MODEL_COL_FIELD"</div>'
+            },
+			{
+                field: 'materialDescription',
+                enableCellEdit: true,
+                cellTemplate: '<div  ng-if="!row.entity.editrow">{{COL_FIELD}}</div><div ng-if="row.entity.editrow"><input type="text" style="height:30px" ng-model="MODEL_COL_FIELD"</div>'
+            },
+            {
+                field: 'shortText',
+                width: "200",
+                enableCellEdit: true,
+                cellTemplate: '<div  ng-if="!row.entity.editrow">{{COL_FIELD}}</div><div ng-if="row.entity.editrow"><input type="text" style="height:30px" ng-model="MODEL_COL_FIELD"</div>'
+            },
+            {
+                field: 'quantity',
+                enableCellEdit: true,
+                cellTemplate: '<div  ng-if="!row.entity.editrow">{{COL_FIELD}}</div><div ng-if="row.entity.editrow"><input type="text" style="height:30px" ng-model="MODEL_COL_FIELD"</div>'
+            },
+			{
+                field: 'unit',
+                enableCellEdit: true,
+                cellTemplate: '<div  ng-if="!row.entity.editrow">{{COL_FIELD}}</div><div ng-if="row.entity.editrow"><input type="text" style="height:30px" ng-model="MODEL_COL_FIELD"</div>'
+            }
+           /* {
+                name: 'priority',
+                filed: 'priority',
+                displayName: 'Priority',
+                editableCellTemplate: 'ui-grid/dropdownEditor',
+                width: '*',
+                editDropdownIdLabel: 'id',
+                editDropdownValueLabel: 'priority',
+                editDropdownFilter: 'translate',
+                editDropdownOptionsArray: [{
+                        id: 'high',
+                        priority: 'high'
+                    },
+                    {
+                        id: 'medium',
+                        priority: 'medium'
+                    },
+                    {
+                        id: 'low',
+                        priority: 'low'
+                    }
+                ]
+            },
+            {
+                name: 'vendors',
+                filed: 'vendors',
+                displayName: 'Vendors',
+                width: "200",
+               editableCellTemplate: "<div><form name=\"inputForm\"><select ng-class=\"'colt' + col.uid\" multiple style=\"position: absolute;\" ui-grid-edit-dropdown ng-model=\"MODEL_COL_FIELD\" ng-options=\"field[editDropdownIdLabel] as field[editDropdownValueLabel] CUSTOM_FILTERS for field in editDropdownOptionsArray\"></select></form></div>",
+                editDropdownRowEntityOptionsArrayPath: 'vendorList.options',
+                editDropdownIdLabel: 'id',
+                editDropdownValueLabel: 'value',
+            } */
+        ],
+        onRegisterApi: function(gridApi) {
+            $scope.gridApi = gridApi;
+            gridApi.selection.on.rowSelectionChanged($scope, function(row) {
+                var msg = 'row selected ' + row.isSelected;
+                console.log('msg', msg);
+                console.log('selected row ', row.entity.plant);
+                 $scope.SelectedRow =     { 
+                                 "plant": row.entity.plant,
+                                "reqDate": row.entity.reqDate,
+                                "purchReq": row.entity.purchReq,
+                                "Chngd": row.entity.Chngd,
+                                "releaseDate": row.entity.releaseDate,
+                                "matlGroup": row.entity.matlGroup,
+                                "shortText": row.entity.shortText,
+                                "Quantity": row.entity.Quantity,
+                                "priority" : row.entity.priority,
+                    			"vendorList" : row.entity.vendors
+                 };
+                console.log('222222222222 ',$scope.SelectedRow);
+                $scope.properties.SelectedRow =  $scope.SelectedRow;
+            });
+        }
+    };
+
+    $scope.vendorName = ['v1', 'v2', 'v3'];
+    $scope.gridOptions.data = $scope.properties.EmployeeList;
+
+    $scope.submit = function(row) {
+        console.log('submit.....', row);
+        console.log('submit.....', row.plant);
+    };
+
+}
+
+
+
